@@ -1,0 +1,78 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  api:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - SECRET_KEY=${SECRET_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - DATABASE_URL=sqlite:///database.db
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DB=establecimientos_db
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - mysql
+      - redis
+    volumes:
+      - ./logs:/app/logs
+      - ./database.db:/app/database.db
+    restart: always
+    networks:
+      - api-network
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=establecimientos_db
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./schema_mysql.sql:/docker-entrypoint-initdb.d/schema.sql
+    restart: always
+    networks:
+      - api-network
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: always
+    networks:
+      - api-network
+
+volumes:
+  mysql_data:
+  redis_data:
+
+networks:
+  api-network:
+    driver: bridge
+```
+
+### `.dockerignore`
+```
+.env
+.env.local
+.env.production
+__pycache__/
+*.pyc
+venv/
+.git/
+.gitignore
+*.md
+.vscode/
+.idea/
+logs/
+*.db
+.pytest_cache/
+htmlcov/

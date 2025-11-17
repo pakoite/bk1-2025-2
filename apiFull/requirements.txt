@@ -1,0 +1,45 @@
+# Core Flask
+Flask==3.0.0
+python-dotenv==1.0.0
+
+# Database
+mysql-connector-python==8.2.0
+
+# Excel
+pandas==2.1.4
+openpyxl==3.1.2
+
+# Authentication & Security
+PyJWT==2.8.0
+Werkzeug==3.0.1
+
+# Validation
+marshmallow==3.20.1
+
+# CORS
+Flask-CORS==4.0.0
+
+# Rate Limiting
+Flask-Limiter==3.5.0
+redis==5.0.1
+
+# Caching
+Flask-Caching==2.1.0
+
+# Documentation
+flasgger==0.9.7.1
+
+# WSGI Server
+gunicorn==21.2.0
+
+# Monitoring
+psutil==5.9.6
+
+# Testing
+pytest==7.4.3
+pytest-cov==4.1.0
+
+# Code Quality
+black==23.12.0
+flake8==6.1.0
+pylint==3.0.3

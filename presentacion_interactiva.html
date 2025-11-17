@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Presentación Interactiva</title>
+  <style>
+    :root{
+      --bg:#0f1724; --fg:#e6eef8; --accent:#06b6d4; --muted:#9aa8b3;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial}
+    body{background:linear-gradient(180deg,#071026 0%, var(--bg) 100%);color:var(--fg);display:flex;align-items:center;justify-content:center;padding:24px}
+    .deck{width:1024px;max-width:100%;height:640px;background:rgba(255,255,255,0.03);border-radius:12px;box-shadow:0 10px 30px rgba(2,6,23,0.7);overflow:hidden;position:relative}
+    .slides{height:100%;display:flex;transition:transform .6s cubic-bezier(.22,.9,.33,1)}
+    .slide{min-width:100%;padding:48px;display:flex;flex-direction:column;justify-content:center}
+    h1{font-size:42px;margin:0 0 12px}
+    p{color:var(--muted);margin:0 0 8px;font-size:18px}
+
+    /* controls */
+    .controls{position:absolute;left:16px;bottom:16px;display:flex;gap:8px}
+    .btn{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.03);padding:8px 12px;border-radius:8px;color:var(--fg);cursor:pointer}
+    .btn.primary{background:linear-gradient(90deg,var(--accent),#7c3aed);border:none}
+
+    /* progress */
+    .progress{position:absolute;left:0;right:0;bottom:0;height:6px;background:rgba(255,255,255,0.03)}
+    .progress > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#7c3aed);width:0%}
+
+    /* sidebar */
+    .sidebar{position:absolute;top:16px;right:16px;width:220px;background:rgba(255,255,255,0.02);border-radius:8px;padding:10px;backdrop-filter:blur(6px)}
+    .thumbs{display:flex;flex-direction:column;gap:8px;max-height:460px;overflow:auto;padding-right:6px}
+    .thumb{display:flex;align-items:center;gap:8px;padding:8px;border-radius:6px;cursor:pointer}
+    .thumb.active{background:linear-gradient(90deg, rgba(6,182,212,0.12), rgba(124,58,237,0.06));border:1px solid rgba(255,255,255,0.03)}
+    .thumb .dot{width:10px;height:10px;border-radius:50%;background:var(--accent)}
+    .notes{font-size:13px;color:var(--muted);margin-top:8px}
+
+    /* slide elements */
+    .grid{display:grid;grid-template-columns:1fr 320px;gap:24px;align-items:start}
+    .card{background:rgba(255,255,255,0.02);padding:18px;border-radius:10px}
+
+    /* responsive */
+    @media (max-width:900px){
+      .sidebar{display:none}
+      .deck{height:560px}
+    }
+  </style>
+</head>
+<body>
+  <div class="deck" id="deck">
+    <div class="slides" id="slides">
+      <section class="slide" data-title="Portada - Guía Flask" data-notes="Portada: título, autor y objetivo.">
+        <div>
+          <h1>Guía Completa: API Flask en Producción</h1>
+          <p>Manual educativo — Material Didáctico · 2024</p>
+          <p style="margin-top:12px">Resumen: prácticas, código y checklist para llevar APIs Flask a producción.</p>
+        </div>
+      </section>
+
+      <section class="slide" data-title="Índice" data-notes="Listado de secciones principales de la guía.">
+        <h1>Índice</h1>
+        <div style="margin-top:12px">
+          <ol>
+            <li>Seguridad</li>
+            <li>Manejo de Errores</li>
+            <li>Base de Datos</li>
+            <li>Validación de Datos</li>
+            <li>Documentación</li>
+            <li>Testing</li>
+            <li>Logging y Monitoreo</li>
+            <li>Performance</li>
+            <li>Deployment</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="slide" data-title="Seguridad - JWT" data-notes="JWT — concepto, instalación e implementación (jwt_handler.py).">
+        <h1>Seguridad — Autenticación (JWT)</h1>
+        <div style="margin-top:12px">
+          <p>JWT: stateless, escalable y firmado. Instalación: <code>pip install PyJWT werkzeug</code></p>
+          <pre style="background:rgba(0,0,0,0.25);padding:10px;border-radius:6px;overflow:auto"># Ejemplo: generar token
+payload = {..., 'exp': datetime.utcnow() + timedelta(hours=24)}
+token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')</pre>
+        </div>
+      </section>
+
+      <section class="slide" data-title="Seguridad - Rate Limiting" data-notes="Flask-Limiter + redis; ejemplos de límites.">
+        <h1>Seguridad — Rate Limiting</h1>
+        <p>Usar <code>Flask-Limiter</code> para prevenir brute force y abuso. Ejemplo: <code>@limiter.limit("5 per minute")</code></p>
+      </section>
+
+      <section class="slide" data-title="Seguridad - SQLi y Entorno" data-notes="Prepared statements y uso de variables de entorno (.env).">
+        <h1>Seguridad — Prevención SQLi y .env</h1>
+        <p>Usar sentencias preparadas; NO concatenar input en queries. Mantener credenciales en variables de entorno con <code>python-dotenv</code>.</p>
+      </section>
+
+      <section class="slide" data-title="Seguridad - CORS" data-notes="Configurar CORS solo para dominios de confianza en producción.">
+        <h1>Seguridad — CORS</h1>
+        <p>Configurar orígenes permitidos con <code>flask-cors</code>. En producción permitir solo dominios específicos.</p>
+      </section>
+
+      <section class="slide" data-title="Manejo de Errores" data-notes="Estructura estándar de respuestas y manejadores globales.">
+        <h1>Manejo de Errores</h1>
+        <p>Usa respuestas estandarizadas y manejadores globales. Incluye códigos 4xx/5xx y excepciones personalizadas.</p>
+      </section>
+
+      <section class="slide" data-title="Base de Datos - Pools y Transacciones" data-notes="Connection pooling, transacciones y Alembic.">
+        <h1>Base de Datos</h1>
+        <div class="grid" style="margin-top:12px">
+          <div>
+            <h3>Connection Pooling</h3>
+            <p>Reutiliza conexiones para mejorar rendimiento (SQLite/MySQL examples).</p>
+            <h3>Transacciones</h3>
+            <p>Usar commit/rollback en operaciones críticas (p. ej. transferencias).</p>
+          </div>
+          <div style="width:320px">
+            <h3>Migraciones</h3>
+            <p>Usar Alembic para versionar esquema y aplicar migraciones reproducibles.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-title="Validación de Datos" data-notes="Marshmallow: schemas, validaciones y ejemplos.">
+        <h1>Validación de Datos</h1>
+        <p>Usa Marshmallow para validar y serializar. Define schemas con campos, validaciones y mensajes claros.</p>
+      </section>
+
+      <section class="slide" data-title="Documentación" data-notes="Flasgger / OpenAPI: documentar endpoints y pruebas interactivas.">
+        <h1>Documentación</h1>
+        <p>Genera documentación interactiva con Swagger (Flasgger). Expone /docs/ y /apispec.json.</p>
+      </section>
+
+      <section class="slide" data-title="Testing" data-notes="Pytest, fixtures y cobertura.">
+        <h1>Testing</h1>
+        <p>Escribe tests unitarios e integración con pytest; usa fixtures y busca >=80% de cobertura.</p>
+      </section>
+
+      <section class="slide" data-title="Logging y Monitoreo" data-notes="RotatingFileHandler, middleware y health checks.">
+        <h1>Logging y Monitoreo</h1>
+        <p>Configura logs rotativos, middleware para request/response y un endpoint /health con métricas.</p>
+      </section>
+
+      <section class="slide" data-title="Performance" data-notes="Cache con Redis, paginación y compresión.">
+        <h1>Performance</h1>
+        <p>Usa Redis + Flask-Caching, paginación, compresión (flask-compress) y evita N+1 queries.</p>
+      </section>
+
+      <section class="slide" data-title="Deployment" data-notes="Docker, Gunicorn, Nginx, systemd y CI/CD.">
+        <h1>Deployment</h1>
+        <p>Empaqueta con Docker, sirve con Gunicorn detrás de Nginx, y automatiza con GitHub Actions.</p>
+      </section>
+
+      <section class="slide" data-title="Ejercicios" data-notes="Lista de ejercicios prácticos para el estudiante.">
+        <h1>Ejercicios Prácticos</h1>
+        <ul>
+          <li>Sistema de autenticación completo (JWT, roles).</li>
+          <li>CRUD con validación, paginación y tests.</li>
+          <li>Rate limiting por tipo de usuario.</li>
+          <li>Logging completo y rotación de logs.</li>
+          <li>Deployment con Docker + CI/CD.</li>
+        </ul>
+      </section>
+
+      <section class="slide" data-title="Checklist" data-notes="Checklist resumido para pasar a producción.">
+        <h1>Checklist para Producción</h1>
+        <p>Seguridad, tests, monitoring, performance y deployment — todo listo en la guía.</p>
+      </section>
+
+      <section class="slide" data-title="Recursos y Conclusión" data-notes="Enlaces útiles, libros y comunidades.">
+        <h1>Recursos y Conclusión</h1>
+        <p>Enlaces oficiales, libros recomendados y comunidades para continuar aprendiendo.</p>
+      </section>
+    </div></div>
+      </section>
+
+      <section class="slide" data-title="Agenda" data-notes="Menciona los puntos a tratar: objetivo, demo, preguntas.">
+        <h1>Agenda</h1>
+        <div style="display:flex;gap:18px;margin-top:12px">
+          <div class="card" style="flex:1">
+            <h3 style="margin:0 0 8px">1. Contexto</h3>
+            <p>Por qué estamos aquí y cuál es el problema a resolver.</p>
+          </div>
+          <div class="card" style="width:300px">
+            <h3 style="margin:0 0 8px">2. Solución</h3>
+            <p>Demo rápida y plan de acción.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-title="Demo" data-notes="Muestra la demo en vivo y capturas.">
+        <h1>Demo / Código</h1>
+        <div style="margin-top:12px">
+          <p>Incrusta aquí tu demo, GIF o snippet.</p>
+          <pre style="background:rgba(0,0,0,0.25);padding:12px;border-radius:8px;overflow:auto;margin-top:8px;">// Ejemplo: inicializar presentación
+const deck = new Deck('#slides')
+</pre>
+        </div>
+      </section>
+
+      <section class="slide" data-title="Contacto" data-notes="Deja tus datos y CTA.">
+        <h1>Contacto</h1>
+        <p>Nombre: Alejandro Sánchez<br/>Email: ejemplo@correo.com</p>
+      </section>
+    </div>
+
+    <div class="progress"><i id="progressBar"></i></div>
+
+    <div class="controls">
+      <button class="btn" id="prevBtn" title="Anterior">←</button>
+      <button class="btn" id="nextBtn" title="Siguiente">→</button>
+    </div>
+
+    <aside class="sidebar">
+      <strong>Diapositivas</strong>
+      <div class="thumbs" id="thumbs"></div>
+      <div class="notes" id="notesBox"><em>Notas de la diapositiva</em></div>
+    </aside>
+  </div>
+
+<script>
+  const slidesEl = document.getElementById('slides');
+  const slides = Array.from(slidesEl.children);
+  const thumbs = document.getElementById('thumbs');
+  const notesBox = document.getElementById('notesBox');
+  const progress = document.getElementById('progressBar');
+  let index = 0;
+
+  function renderThumbs(){
+    thumbs.innerHTML = '';
+    slides.forEach((s,i)=>{
+      const t = document.createElement('div');
+      t.className = 'thumb' + (i===index? ' active':'');
+      t.innerHTML = `<div class="dot"></div><div style="flex:1"><strong style="font-size:13px">${s.dataset.title || ('Diapositiva '+(i+1))}</strong><div style="font-size:12px;color:var(--muted)">${s.querySelector('p')? s.querySelector('p').innerText.slice(0,60):''}</div></div>`
+      t.onclick = ()=> goTo(i);
+      thumbs.appendChild(t);
+    });
+  }
+
+  function update(){
+    slidesEl.style.transform = `translateX(-${index*100}%)`;
+    renderThumbs();
+    const percent = Math.round((index)/(slides.length-1)*100);
+    progress.style.width = percent + '%';
+    const note = slides[index].dataset.notes || 'Sin notas';
+    notesBox.innerHTML = `<strong>${slides[index].dataset.title||('Diapositiva '+(index+1))}</strong><div style="margin-top:6px">${note}</div>`;
+  }
+
+  function next(){ if(index < slides.length-1){ index++; update(); }}
+  function prev(){ if(index>0){ index--; update(); }}
+  function goTo(i){ index = i; update(); }
+
+  document.getElementById('nextBtn').onclick = next;
+  document.getElementById('prevBtn').onclick = prev;
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'ArrowRight' || e.key === 'PageDown') next();
+    if(e.key === 'ArrowLeft' || e.key === 'PageUp') prev();
+    if(e.key === 'Home') { index = 0; update(); }
+    if(e.key === 'End') { index = slides.length-1; update(); }
+  });
+
+  // click to advance
+  slidesEl.addEventListener('click', (e)=>{
+    // only advance if clicked on empty space, not buttons
+    if(e.target.closest('.btn')) return;
+    next();
+  });
+
+  // download current HTML
+  function downloadHTML(){
+    const blob = new Blob([document.documentElement.outerHTML], {type:'text/html'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'presentacion-interactiva.html';
+    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  }
+  window.downloadHTML = downloadHTML;
+
+  function openNotes(){
+    const nb = document.getElementById('notesBox');
+    if(nb.style.display === 'none') nb.style.display='block'; else nb.style.display='block';
+    nb.scrollIntoView({behavior:'smooth',block:'end'});
+  }
+
+  // initialize
+  renderThumbs(); update();
+
+  // expose Deck for future enhancements
+  window.Deck = {
+    next, prev, goTo, slides, getIndex:()=>index
+  }
+</script>
+</body>
+</html>
